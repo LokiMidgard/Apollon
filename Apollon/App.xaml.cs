@@ -24,6 +24,8 @@ namespace Apollon
             this.Suspending += OnSuspending;
         }
 
+        public static CoreDispatcher Dispatcher { get; private set; }
+
         /// <summary>
         /// Invoked when the application is launched normally by the end user.  Other entry points
         /// will be used such as when the application is launched to open a specific file.
@@ -33,7 +35,8 @@ namespace Apollon
         {
 
 #if DEBUG
-            if (System.Diagnostics.Debugger.IsAttached) {
+            if (System.Diagnostics.Debugger.IsAttached)
+            {
                 // disabled, obscures the hamburger button, enable if you need it
                 //this.DebugSettings.EnableFrameRateCounter = true;
             }
@@ -43,7 +46,8 @@ namespace Apollon
 
             // Do not repeat app initialization when the Window already has content,
             // just ensure that the window is active
-            if (shell == null) {
+            if (shell == null)
+            {
                 // Create a Shell which navigates to the first page
                 shell = new Shell();
 
@@ -51,7 +55,8 @@ namespace Apollon
                 shell.RootFrame.NavigationFailed += OnNavigationFailed;
                 shell.RootFrame.Navigated += OnNavigated;
 
-                if (e.PreviousExecutionState == ApplicationExecutionState.Terminated) {
+                if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
+                {
                     //TODO: Load state from previously suspended application
                 }
 
@@ -61,13 +66,14 @@ namespace Apollon
                 // listen for back button clicks (both soft- and hardware)
                 SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequested;
 
-                if (ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons")) {
+                if (ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons"))
+                {
                     HardwareButtons.BackPressed += OnBackPressed;
                 }
 
                 UpdateBackButtonVisibility();
             }
-
+            Dispatcher = Window.Current.Dispatcher;
             // Ensure the current window is active
             Window.Current.Activate();
         }
@@ -76,7 +82,8 @@ namespace Apollon
         void OnBackPressed(object sender, BackPressedEventArgs e)
         {
             var shell = (Shell)Window.Current.Content;
-            if (shell.RootFrame.CanGoBack) {
+            if (shell.RootFrame.CanGoBack)
+            {
                 e.Handled = true;
                 shell.RootFrame.GoBack();
             }
@@ -86,7 +93,8 @@ namespace Apollon
         void OnBackRequested(object sender, BackRequestedEventArgs e)
         {
             var shell = (Shell)Window.Current.Content;
-            if (shell.RootFrame.CanGoBack) {
+            if (shell.RootFrame.CanGoBack)
+            {
                 e.Handled = true;
                 shell.RootFrame.GoBack();
             }
@@ -126,7 +134,8 @@ namespace Apollon
             var shell = (Shell)Window.Current.Content;
 
             var visibility = AppViewBackButtonVisibility.Collapsed;
-            if (shell.RootFrame.CanGoBack) {
+            if (shell.RootFrame.CanGoBack)
+            {
                 visibility = AppViewBackButtonVisibility.Visible;
             }
 
