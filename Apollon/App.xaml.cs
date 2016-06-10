@@ -25,6 +25,7 @@ namespace Apollon
         }
 
         public static CoreDispatcher Dispatcher { get; private set; }
+        internal static Logic.MusicPlayer MusicPlayer => App.Current.Resources["musicPlayer"] as Logic.MusicPlayer;
 
         /// <summary>
         /// Invoked when the application is launched normally by the end user.  Other entry points
@@ -33,7 +34,7 @@ namespace Apollon
         /// <param name="e">Details about the launch request and process.</param>
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
-
+            MusicPlayer.Init();
 #if DEBUG
             if (System.Diagnostics.Debugger.IsAttached)
             {
@@ -113,6 +114,16 @@ namespace Apollon
         void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
         {
             throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
+        }
+
+        internal static void Log(Exception e)
+        {
+            System.Diagnostics.Debug.Write(e);
+        }
+
+        internal static void Log(string e)
+        {
+            System.Diagnostics.Debug.Write(e);
         }
 
         /// <summary>

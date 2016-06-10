@@ -33,7 +33,7 @@ namespace Apollon.Model
         {
             var result = await graph.CreateFileInputNodeAsync(file);
             if (result.Status != AudioFileNodeCreationStatus.Success)
-                throw new Exception();
+                throw new Exception("Faild To Create InputNode");
             return result.FileInputNode;
         }
 

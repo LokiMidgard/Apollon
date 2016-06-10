@@ -96,11 +96,14 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Common\TimeSpanToSecondsConverter.cs" />
     <Compile Include="Logic\MusicPlayer.cs" />
     <Compile Include="Model\FileSong.cs" />
     <Compile Include="Model\ISong.cs" />
+    <Compile Include="Presentation\AlbumViewModel.cs" />
     <Compile Include="Presentation\Music\JumpViewModel.cs" />
     <Compile Include="Presentation\Music\SongViewModel.cs" />
+    <Compile Include="Presentation\SongLibraryViewmodel.cs" />
     <Compile Include="Shell.xaml.cs">
       <DependentUpon>Shell.xaml</DependentUpon>
     </Compile>
@@ -108,8 +111,8 @@
     <Compile Include="Pages\Page1.xaml.cs">
       <DependentUpon>Page1.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Page2.xaml.cs">
-      <DependentUpon>Page2.xaml</DependentUpon>
+    <Compile Include="Pages\SongEditor.xaml.cs">
+      <DependentUpon>SongEditor.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\Page3.xaml.cs">
       <DependentUpon>Page3.xaml</DependentUpon>
@@ -154,7 +157,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Pages\Page2.xaml">
+    <Page Include="Pages\SongEditor.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

@@ -19,9 +19,9 @@ namespace Apollon.Pages
 
             var storageFile = await Windows.Storage.KnownFolders.MusicLibrary.GetFileAsync(@"Sinsekai [OST]\01. 陰の伝承歌 第一部.mp3");
 
-            var song = new Model.FileSong(storageFile);
+            var song = await Model.FileSong.Create(storageFile);
 
-            var vm = await Presentation.Music.SongViewModel.Create(song);
+            var vm = new Presentation.Music.SongViewModel(song);
 
             vm.Jumps.Add(new Presentation.Music.JumpViewModel(vm)
             {

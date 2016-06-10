@@ -37,7 +37,7 @@ namespace Apollon.Logic
         {
             var graphResult = await Windows.Media.Audio.AudioGraph.CreateAsync(new Windows.Media.Audio.AudioGraphSettings(Windows.Media.Render.AudioRenderCategory.Media) { });
             if (graphResult.Status != Windows.Media.Audio.AudioGraphCreationStatus.Success)
-                throw new Exception();
+                throw new Exception("Faild to Create Audio Graph");
 
             graph = graphResult.Graph;
 
@@ -45,7 +45,7 @@ namespace Apollon.Logic
 
             var outPutResult = await graph.CreateDeviceOutputNodeAsync();
             if (outPutResult.Status != Windows.Media.Audio.AudioDeviceNodeCreationStatus.Success)
-                throw new Exception();
+                throw new Exception("Faild To Create DeviceOutput");
 
             outputNode = outPutResult.DeviceOutputNode;
 
@@ -55,54 +55,100 @@ namespace Apollon.Logic
 
         private async void MainGraph_QuantumProcessed(AudioGraph sender, object args)
         {
-            this.Position = mainInputNode.Position;
-
-            if (NextJump != null && NextJump.Song == mainSong)
+            try
             {
+                this.Position = mainInputNode.Position;
 
-                if (NextJump != null
-                    && Position >= NextJump.Origin - NextJump.CrossFade
-                    && Position <= NextJump.Origin
-                    && !IsFading)
+                if (NextJump != null && NextJump.Song == mainSong)
                 {
-                    IsFading = true;
-                    subSong = NextJump.TargetSong;
-                    subInputNode = await subSong.Song.CreateNode(graph);
-                    subInputNode.AddOutgoingConnection(outputNode);
 
-                    subInputNode.StartTime = NextJump.TargetTime - (NextJump.Origin - mainInputNode.Position);
-                    subInputNode.OutgoingGain = 0;
-                    subInputNode.Start();
-                }
-                if (IsFading && subInputNode != null)
-                {
-                    var fadePosition = (NextJump.Origin - mainInputNode.Position);
-                    var fadeTime = NextJump.CrossFade;
+                    if (NextJump != null
+                        && Position >= NextJump.Origin - NextJump.CrossFade
+                        && Position <= NextJump.Origin
+                        && !IsFading)
+                    {
+                        IsFading = true;
+                        subSong = NextJump.TargetSong ?? NextJump.Song;
+                        subInputNode = await subSong.Song.CreateNode(graph);
+                        subInputNode.AddOutgoingConnection(outputNode);
 
-                    var percentage = Math.Min(1.0, Math.Max(0.0, fadePosition.TotalSeconds / fadeTime.TotalSeconds));
+                        subInputNode.StartTime = NextJump.TargetTime - (NextJump.Origin - mainInputNode.Position);
+                        subInputNode.OutgoingGain = 0;
+                        subInputNode.Start();
+                    }
+                    if (IsFading && subInputNode != null)
+                    {
+                        var fadePosition = (NextJump.Origin - mainInputNode.Position);
+                        var fadeTime = NextJump.CrossFade;
 
-                    subInputNode.OutgoingGain = 1.0 - percentage;
-                    mainInputNode.OutgoingGain = percentage;
+                        var percentage = Math.Min(1.0, Math.Max(0.0, fadePosition.TotalSeconds / fadeTime.TotalSeconds));
 
-                }
-                if (Position > NextJump.Origin
-                    && IsFading && subInputNode != null)
-                {
-                    subInputNode.OutgoingGain = 1.0;
-                    mainInputNode.Stop();
-                    mainInputNode.RemoveOutgoingConnection(outputNode);
-                    mainInputNode.Dispose();
-                    mainInputNode = subInputNode;
-                    subInputNode = null;
-                    mainSong = subSong;
-                    subSong = null;
-                    NextJump = NextJump.NextDefaultJump ?? mainSong.Jumps.FirstOrDefault(x => mainInputNode.Position < x.Origin);
-                    IsFading = false;
+                        subInputNode.OutgoingGain = 1.0 - percentage;
+                        mainInputNode.OutgoingGain = percentage;
+
+                    }
+                    if (Position > NextJump.Origin
+                        && IsFading && subInputNode != null)
+                    {
+                        subInputNode.OutgoingGain = 1.0;
+                        mainInputNode.Stop();
+                        mainInputNode.RemoveOutgoingConnection(outputNode);
+                        var tempNode = mainInputNode;
+                        mainInputNode = subInputNode;
+                        tempNode.Dispose();
+                        subInputNode = null;
+                        mainSong = subSong;
+                        subSong = null;
+                        NextJump = NextJump.NextDefaultJump ?? mainSong.Jumps.FirstOrDefault(x => mainInputNode.Position < x.Origin);
+                        IsFading = false;
+                    }
+
                 }
 
             }
+            catch (Exception e)
+            {
+                App.Log(e);
+                Recover();
+            }
+        }
+
+        private void Recover()
+        {
+            App.Log("Recover MediaPlayer");
+            graph.Stop();
+            try
+            {
+                mainInputNode.Dispose();
+            }
+            catch (Exception) { }
+            try
+            {
+                subInputNode.Dispose();
+            }
+            catch (Exception) { }
+            try
+            {
+                outputNode.Dispose();
+            }
+            catch (Exception) { }
+            mainInputNode = null;
+            subInputNode = null;
+            outputNode = null;
+            mainSong = null;
+            subSong = null;
+
+            try
+            {
+                graph.Dispose();
+            }
+            catch (Exception) { }
+
+            graph = null;
+            Init();
 
         }
+
         public void Pause()
         {
             graph.Stop();
@@ -134,13 +180,14 @@ namespace Apollon.Logic
                 {
                     Origin = mainInputNode.Position + TimeSpan.FromSeconds(5),
                     TargetSong = song,
-                    TargetTime = TimeSpan.Zero,
+                    TargetTime = TimeSpan.FromSeconds(5),
                     CrossFade = TimeSpan.FromSeconds(5)
                 };
                 if (mainInputNode.Duration < jump.Origin)
                 {
                     jump.Origin = mainInputNode.Duration;
                     jump.CrossFade = mainInputNode.Duration - mainInputNode.Position;
+                    jump.TargetTime = jump.CrossFade;
                 }
                 NextJump = jump;
             }
