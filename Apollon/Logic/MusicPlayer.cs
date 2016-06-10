@@ -26,7 +26,7 @@ namespace Apollon.Logic
 
         public SongViewModel PlayingSong => mainSong;
 
-        public TimeSpan? Duration => PlayingSong?.Duration;
+        public TimeSpan? Duration => PlayingSong?.Song.Duration;
 
         public JumpViewModel NextJump { get; set; }
 
@@ -96,7 +96,7 @@ namespace Apollon.Logic
                     subInputNode = null;
                     mainSong = subSong;
                     subSong = null;
-                    NextJump = NextJump.NextDefaultJump ?? mainSong.Jumps.FirstOrDefault(x => mainSong.CurrentPosition < x.Origin);
+                    NextJump = NextJump.NextDefaultJump ?? mainSong.Jumps.FirstOrDefault(x => mainInputNode.Position < x.Origin);
                     IsFading = false;
                 }
 
