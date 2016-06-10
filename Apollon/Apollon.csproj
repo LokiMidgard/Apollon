@@ -100,6 +100,9 @@
     <Compile Include="Logic\MusicPlayer.cs" />
     <Compile Include="Model\FileSong.cs" />
     <Compile Include="Model\ISong.cs" />
+    <Compile Include="Pages\JumpEditor.xaml.cs">
+      <DependentUpon>JumpEditor.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Presentation\AlbumViewModel.cs" />
     <Compile Include="Presentation\Music\JumpViewModel.cs" />
     <Compile Include="Presentation\Music\SongViewModel.cs" />
@@ -149,6 +152,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Pages\JumpEditor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Shell.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

@@ -15,7 +15,7 @@ namespace Apollon.Presentation.Music
         public JumpViewModel(SongViewModel song)
         {
             Song = song;
-            TestCommand = new Intense.Presentation.RelayCommand(Test);
+            TestCommand = new RelayCommand(Test);
         }
 
         private async void Test()

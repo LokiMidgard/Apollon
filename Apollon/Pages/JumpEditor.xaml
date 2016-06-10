@@ -1,0 +1,75 @@
+﻿<Page x:Class="Apollon.Pages.JumpEditor"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:common="using:Apollon.Common"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="using:Apollon.Pages"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      mc:Ignorable="d">
+    <Page.Resources>
+        <common:TimeSpanToSecondsConverter x:Key="TimeSpanConverter" />
+    </Page.Resources>
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <TextBox Grid.ColumnSpan="2"
+                 PlaceholderText="[Name]"
+                 Text="{Binding Name,
+                                Mode=TwoWay,
+                                UpdateSourceTrigger=PropertyChanged}" />
+        <TextBlock Grid.Row="1" Text="Start" />
+        <TextBox Grid.Row="1"
+                 Grid.Column="2"
+                 Text="{Binding Origin}" />
+        <Slider Grid.Row="2"
+                Grid.ColumnSpan="2"
+                Maximum="{Binding Song.Song.Duration.TotalSeconds}"
+                Minimum="0"
+                Value="{Binding Origin,
+                                Mode=TwoWay,
+                                Converter={StaticResource TimeSpanConverter}}" />
+
+        <TextBlock Grid.Row="3" Text="Target" />
+        <TextBox Grid.Row="3"
+                 Grid.Column="2"
+                 Text="{Binding TargetTime}" />
+        <Slider Grid.Row="4"
+                Grid.ColumnSpan="2"
+                Maximum="{Binding Song.Song.Duration.TotalSeconds}"
+                Minimum="0"
+                Value="{Binding TargetTime,
+                                Mode=TwoWay,
+                                Converter={StaticResource TimeSpanConverter}}" />
+
+        <TextBlock Grid.Row="5" Text="Fade" />
+        <TextBox Grid.Row="5"
+                 Grid.Column="2"
+                 Text="{Binding CrossFade}" />
+        <Slider Grid.Row="6"
+                Grid.ColumnSpan="2"
+                Maximum="10"
+                Minimum="0"
+                Value="{Binding CrossFade,
+                                Mode=TwoWay,
+                                Converter={StaticResource TimeSpanConverter}}" />
+
+        <Button Grid.Row="7"
+                Grid.ColumnSpan="2"
+                Command="{Binding TestCommand}"
+                Content="Test" />
+
+    </Grid>
+</Page>

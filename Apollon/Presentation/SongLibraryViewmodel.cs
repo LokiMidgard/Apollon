@@ -37,7 +37,6 @@ namespace Apollon.Presentation
                         continue;
                     mp3List.Add(file);
                 }
-
             }
 
             var songviewmodels = await Task.WhenAll(mp3List
@@ -48,7 +47,6 @@ namespace Apollon.Presentation
 
             foreach (var album in albumGroups.OrderBy(x => x.Key))
                 this.Albums.Add(new AlbumViewModel(album));
-
         }
     }
 }

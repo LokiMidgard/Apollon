@@ -20,7 +20,6 @@
                 <ColumnDefinition />
                 <ColumnDefinition />
                 <ColumnDefinition />
-                <ColumnDefinition />
             </Grid.ColumnDefinitions>
             <StackPanel>
                 <TextBlock DataContext="{x:Bind Frame}"
@@ -71,71 +70,26 @@
                          SelectedIndex="{Binding SelectedJump}">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Name, Mode=OneWay}" />
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.ColumnSpan="2" Text="{Binding Name, Mode=OneWay}" />
+                                <Button Grid.Row="1"
+                                        Grid.Column="1"
+                                        Click="EditJump"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch"
+                                        Content="Edit" />
+                            </Grid>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
-            </Grid>
-            <Grid Grid.Column="3" DataContext="{Binding ElementName=JumList, Path=SelectedItem}">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-                <TextBox Grid.ColumnSpan="2"
-                         PlaceholderText="[Name]"
-                         Text="{Binding Name,
-                                        Mode=TwoWay,
-                                        UpdateSourceTrigger=PropertyChanged}" />
-                <TextBlock Grid.Row="1" Text="Start" />
-                <TextBox Grid.Row="1"
-                         Grid.Column="2"
-                         Text="{Binding Origin}" />
-                <Slider Grid.Row="2"
-                        Grid.ColumnSpan="2"
-                        Maximum="{Binding Song.Song.Duration.TotalSeconds}"
-                        Minimum="0"
-                        Value="{Binding Origin,
-                                        Mode=TwoWay,
-                                        Converter={StaticResource TimeSpanConverter}}" />
-
-                <TextBlock Grid.Row="3" Text="Target" />
-                <TextBox Grid.Row="3"
-                         Grid.Column="2"
-                         Text="{Binding TargetTime}" />
-                <Slider Grid.Row="4"
-                        Grid.ColumnSpan="2"
-                        Maximum="{Binding Song.Song.Duration.TotalSeconds}"
-                        Minimum="0"
-                        Value="{Binding TargetTime,
-                                        Mode=TwoWay,
-                                        Converter={StaticResource TimeSpanConverter}}" />
-
-                <TextBlock Grid.Row="5" Text="Fade" />
-                <TextBox Grid.Row="5"
-                         Grid.Column="2"
-                         Text="{Binding TargetTime}" />
-                <Slider Grid.Row="6"
-                        Grid.ColumnSpan="2"
-                        Maximum="10"
-                        Minimum="0"
-                        Value="{Binding CrossFade,
-                                        Mode=TwoWay,
-                                        Converter={StaticResource TimeSpanConverter}}" />
-
-                <Button Grid.Row="7"
-                        Grid.ColumnSpan="2"
-                        Command="{Binding TestCommand}"
-                        Content="Test" />
             </Grid>
         </Grid>
     </Grid>

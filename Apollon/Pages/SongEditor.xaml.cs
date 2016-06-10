@@ -23,5 +23,11 @@ namespace Apollon.Pages
                 await App.MusicPlayer.Play(song);
             }
         }
+
+        private void EditJump(object sender, RoutedEventArgs e)
+        {
+            var frameworkElement = sender as FrameworkElement;
+            Frame.Navigate(typeof(Pages.JumpEditor), frameworkElement.DataContext);
+        }
     }
 }
