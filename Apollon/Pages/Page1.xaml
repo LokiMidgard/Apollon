@@ -10,9 +10,10 @@
         <ScrollViewer Padding="{x:Bind Frame.Padding, Mode=OneWay}">
             <StackPanel>
                 <Button Click="Button_Click" Content="Play" />
-                <Slider Maximum="300"
+                <Slider Maximum="{Binding Duration.TotalSeconds}"
                         Minimum="0"
-                        Value="{Binding Position.TotalSeconds}" />
+                        Value="{Binding Position.TotalSeconds,
+                                        Mode=TwoWay}" />
                 <TextBlock DataContext="{x:Bind Frame}"
                            Style="{StaticResource TitleTextBlockStyle}"
                            Text="Page 1"

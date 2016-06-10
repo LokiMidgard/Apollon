@@ -21,7 +21,7 @@ namespace Apollon.Pages
 
             var song = new Model.FileSong(storageFile);
 
-            var vm = new Presentation.Music.SongViewModel(song);
+            var vm = await Presentation.Music.SongViewModel.Create(song);
 
             vm.Jumps.Add(new Presentation.Music.JumpViewModel(vm)
             {

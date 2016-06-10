@@ -10,26 +10,28 @@ using Windows.Media.Audio;
 namespace Apollon.Logic
 {
     [PropertyChanged.ImplementPropertyChanged]
-    class MusicPlayer : INotifyPropertyChanged
+    class MusicPlayer : INotifyPropertyChanged, IDisposable
     {
         private AudioGraph graph;
         private AudioDeviceOutputNode outputNode;
         private AudioFileInputNode mainInputNode;
-        private SongViewModel mainSong { get; set; }
+        private SongViewModel mainSong { get; set; } // Property so PropertyChanged.Fody can do its stuff.
         private AudioFileInputNode subInputNode;
         private SongViewModel subSong;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public TimeSpan Position { get; private set; }
+
+        public TimeSpan? Position { get; private set; }
 
         public SongViewModel PlayingSong => mainSong;
 
+        public TimeSpan? Duration => PlayingSong?.Duration;
+
         public JumpViewModel NextJump { get; set; }
 
-        public bool Fading { get; private set; }
-        public double SubGain { get; private set; }
-        public double MainGain { get; private set; }
+        public bool IsPlaying { get; private set; }
+        public bool IsFading { get; private set; }
 
         public async Task Init()
         {
@@ -58,32 +60,33 @@ namespace Apollon.Logic
             if (NextJump != null && NextJump.Song == mainSong)
             {
 
-                if (Position >= NextJump.Origin - NextJump.CrossFade
+                if (NextJump != null
+                    && Position >= NextJump.Origin - NextJump.CrossFade
                     && Position <= NextJump.Origin
-                    && !Fading)
+                    && !IsFading)
                 {
-                    Fading = true;
+                    IsFading = true;
                     subSong = NextJump.TargetSong;
                     subInputNode = await subSong.Song.CreateNode(graph);
                     subInputNode.AddOutgoingConnection(outputNode);
 
                     subInputNode.StartTime = NextJump.TargetTime - (NextJump.Origin - mainInputNode.Position);
-                    subInputNode.OutgoingGain = 0.00000000001;
+                    subInputNode.OutgoingGain = 0;
                     subInputNode.Start();
                 }
-                if (Fading && subInputNode != null)
+                if (IsFading && subInputNode != null)
                 {
                     var fadePosition = (NextJump.Origin - mainInputNode.Position);
                     var fadeTime = NextJump.CrossFade;
 
                     var percentage = Math.Min(1.0, Math.Max(0.0, fadePosition.TotalSeconds / fadeTime.TotalSeconds));
 
-                    this.SubGain = subInputNode.OutgoingGain = 1.0-percentage;
-                    this.MainGain = mainInputNode.OutgoingGain = percentage;
+                    subInputNode.OutgoingGain = 1.0 - percentage;
+                    mainInputNode.OutgoingGain = percentage;
 
                 }
                 if (Position > NextJump.Origin
-                    && Fading && subInputNode != null)
+                    && IsFading && subInputNode != null)
                 {
                     subInputNode.OutgoingGain = 1.0;
                     mainInputNode.Stop();
@@ -93,22 +96,74 @@ namespace Apollon.Logic
                     subInputNode = null;
                     mainSong = subSong;
                     subSong = null;
-                    Fading = false;
+                    NextJump = NextJump.NextDefaultJump ?? mainSong.Jumps.FirstOrDefault(x => mainSong.CurrentPosition < x.Origin);
+                    IsFading = false;
                 }
 
             }
 
         }
+        public void Pause()
+        {
+            graph.Stop();
+            IsPlaying = false;
+        }
 
+        public void Seek(TimeSpan position)
+        {
+            if (subInputNode != null)
+                throw new InvalidOperationException("Can't Seek while Fading");
+            if (mainInputNode != null)
+                mainInputNode.Seek(position);
+        }
         public async Task Play(SongViewModel song)
         {
+            if (mainInputNode == null)
+            {
+                mainInputNode = await song.Song.CreateNode(graph);
+                mainSong = song;
 
-            mainInputNode = await song.Song.CreateNode(graph);
-            mainSong = song;
-            NextJump = mainSong.Jumps.FirstOrDefault();
-            mainInputNode.AddOutgoingConnection(outputNode);
+                NextJump = mainSong.Jumps.FirstOrDefault();
+                mainInputNode.AddOutgoingConnection(outputNode);
+                graph.Start();
+                IsPlaying = true;
+            }
+            else if (IsPlaying)
+            {
+                var jump = new JumpViewModel(mainSong)
+                {
+                    Origin = mainInputNode.Position + TimeSpan.FromSeconds(5),
+                    TargetSong = song,
+                    TargetTime = TimeSpan.Zero,
+                    CrossFade = TimeSpan.FromSeconds(5)
+                };
+                if (mainInputNode.Duration < jump.Origin)
+                {
+                    jump.Origin = mainInputNode.Duration;
+                    jump.CrossFade = mainInputNode.Duration - mainInputNode.Position;
+                }
+                NextJump = jump;
+            }
+            else
+            {
+                if (mainInputNode != null)
+                {
+                    mainInputNode.RemoveOutgoingConnection(outputNode);
+                    mainInputNode.Dispose();
+                    mainInputNode = null;
+                    mainSong = null;
+                }
+                if (subInputNode != null)
+                {
+                    subInputNode.RemoveOutgoingConnection(outputNode);
+                    subInputNode.Dispose();
+                    subInputNode = null;
+                    subSong = null;
+                }
+                IsFading = false;
 
-            graph.Start();
+                await Play(song);
+            }
         }
 
         private async void OnPropertyChanged(string caller)
@@ -116,5 +171,35 @@ namespace Apollon.Logic
             await App.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(caller)));
         }
+
+        #region IDisposable Support
+        private bool disposedValue = false; // Dient zur Erkennung redundanter Aufrufe.
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    graph.Stop();
+                    outputNode.Dispose();
+                    mainInputNode?.Dispose();
+                    subInputNode?.Dispose();
+                    graph.Dispose();
+                }
+
+
+                disposedValue = true;
+            }
+        }
+
+
+        // Dieser Code wird hinzugefügt, um das Dispose-Muster richtig zu implementieren.
+        public void Dispose()
+        {
+            // Ändern Sie diesen Code nicht. Fügen Sie Bereinigungscode in Dispose(bool disposing) weiter oben ein.
+            Dispose(true);
+        }
+        #endregion
     }
 }

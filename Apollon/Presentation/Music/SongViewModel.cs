@@ -11,9 +11,10 @@ namespace Apollon.Presentation.Music
     class SongViewModel
     {
 
-        public SongViewModel(FileSong song)
+        private SongViewModel(FileSong song, TimeSpan duration)
         {
             this.Song = song;
+            this.Duration = duration;
         }
 
         public String Title { get; }
@@ -26,6 +27,15 @@ namespace Apollon.Presentation.Music
 
         public TimeSpan CurrentPosition { get; set; }
 
-        public ObservableCollection<JumpViewModel> Jumps { get;  } = new ObservableCollection<JumpViewModel>();
+        public ObservableCollection<JumpViewModel> Jumps { get; } = new ObservableCollection<JumpViewModel>();
+
+        public static async Task<SongViewModel> Create(FileSong song)
+        {
+
+            using (var graph = (await Windows.Media.Audio.AudioGraph.CreateAsync(new Windows.Media.Audio.AudioGraphSettings(Windows.Media.Render.AudioRenderCategory.Other))).Graph)
+            using (var node = (await song.CreateNode(graph)))
+                return new SongViewModel(song, node.Duration);
+
+        }
     }
 }
