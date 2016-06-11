@@ -99,6 +99,14 @@ namespace Apollon.Common.SongAnalizer
             {
             }
         }
+        public sealed class SongConfiguration : ConfigurationElement
+        {
+            public SongConfiguration(string lable) : base(lable)
+            {
+            }
+
+            public Song SelectedSong { get; set; }
+        }
 
         public sealed class TimeSpanConfiguration : MinMaxConfigurationElement<TimeSpan>
         {
