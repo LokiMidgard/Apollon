@@ -39,14 +39,28 @@
                 <ListView Grid.Row="3"
                           Grid.ColumnSpan="2"
                           ItemsSource="{Binding Songs}"
-                          SelectedIndex="{Binding SelectedSongIndex, Mode=TwoWay}">
+                          SelectedIndex="{Binding SelectedSongIndex,
+                                                  Mode=TwoWay}">
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                            <Setter Property="HorizontalAlignment" Value="Stretch" />
+                        </Style>
+                    </ListView.ItemContainerStyle>
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock>
-                                <Run Text="{Binding Song.Album}" />
-                                <Run Text=" - " />
-                                <Run Text="{Binding Song.Title}" />
-                            </TextBlock>
+                            <StackPanel Margin="0,10,0,10">
+                                <TextBox Margin="0,0,0,3"
+                                         PlaceholderText="{Binding ElementName=SongIdentifiyer,
+                                                                   Path=Text}"
+                                         Text="{Binding InternalName,
+                                                        Mode=TwoWay}" />
+                                <TextBlock Name="SongIdentifiyer">
+                                    <Run Text="{Binding Song.Album}" />
+                                    <Run Text=" - " />
+                                    <Run Text="{Binding Song.Title}" />
+                                </TextBlock>
+                            </StackPanel>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>

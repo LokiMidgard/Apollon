@@ -44,10 +44,11 @@ namespace Apollon.Presentation.Music
             App.MusicPlayer.Pause();
         }
 
+        [DataMember]
         public string Name { get; set; }
 
         [DataMember]
-        public SongViewModel Song { get; }
+        public SongViewModel Song { get; private set; }
 
         /// <summary>
         /// The Position at when we initiate the jump

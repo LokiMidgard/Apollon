@@ -76,7 +76,17 @@ namespace Apollon
 
                 if (guid.HasValue)
                 {
-                    CurrentProject = Presentation.Music.ProjectViewModel.Load(guid.Value);
+                    var task = Presentation.Music.ProjectViewModel.Load(guid.Value);
+                    task = task.ContinueWith(x =>
+                      {
+                          if (x.IsFaulted)
+                          {
+                              Log(x.Exception);
+                              return null;
+                          }
+                          return x.Result;
+                      });
+                    CurrentProject = task;
                 }
 
 
@@ -159,7 +169,7 @@ namespace Apollon
             if (CurrentProject != null)
             {
                 var p = await CurrentProject;
-                await p?.Save();
+                await (p?.Save() ?? Task.Delay(0));
                 Windows.Storage.ApplicationData.Current.LocalSettings.Values[SAVED_STATE] = p?.Id;
             }
             deferral.Complete();

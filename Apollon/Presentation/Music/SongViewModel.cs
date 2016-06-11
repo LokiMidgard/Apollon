@@ -60,6 +60,9 @@ namespace Apollon.Presentation.Music
         [DataMember]
         public ProjectViewModel Project { get; private set; }
 
+        [DataMember]
+        public string InternalName { get; set; }
+        public string Name => InternalName ?? $"{Song.Album} - {Song.Title}";
 
         [DataMember]
         public ObservableCollection<JumpViewModel> Jumps => jumps ?? (jumps = new ObservableCollection<JumpViewModel>());

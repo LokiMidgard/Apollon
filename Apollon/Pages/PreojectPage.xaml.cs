@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Windows.UI.Xaml.Controls;
 
 namespace Apollon.Pages
@@ -16,10 +17,14 @@ namespace Apollon.Pages
 
         private async void Init()
         {
-            if (App.CurrentProject == null)
-                App.SetProject(new Presentation.Music.ProjectViewModel());
+            var projectViewModel = await (App.CurrentProject ?? Task.FromResult<Presentation.Music.ProjectViewModel>(null));
+            if (projectViewModel == null)
+            {
+                projectViewModel = new Presentation.Music.ProjectViewModel();
+                App.SetProject(projectViewModel);
+            }
 
-            this.DataContext = await App.CurrentProject;
+            this.DataContext = projectViewModel;
         }
     }
 }
