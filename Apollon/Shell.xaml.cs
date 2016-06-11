@@ -14,9 +14,9 @@ namespace Apollon
             this.InitializeComponent();
 
             var vm = new ShellViewModel();
-            vm.TopItems.Add(new NavigationItem { Icon = "", DisplayName = "Welcome", PageType = typeof(WelcomePage) });
-            vm.TopItems.Add(new NavigationItem { Icon = "", DisplayName = "Page 1", PageType = typeof(PreojectPage) });
-            vm.TopItems.Add(new NavigationItem { Icon = "", DisplayName = "Page 2", PageType = typeof(Page2) });
+            vm.TopItems.Add(new NavigationItem { Icon = "", DisplayName = "Player", PageType = typeof(PlayerPage) });
+            vm.TopItems.Add(new NavigationItem { Icon = "", DisplayName = "Project Editor", PageType = typeof(ProjectPage) });
+            vm.TopItems.Add(new NavigationItem { Icon = "", DisplayName = "Song Editor", PageType = typeof(Page2) });
             vm.TopItems.Add(new NavigationItem { Icon = "", DisplayName = "Page 3", PageType = typeof(Page3) });
 
             vm.BottomItems.Add(new NavigationItem { Icon = "", DisplayName = "Settings", PageType = typeof(SettingsPage) });

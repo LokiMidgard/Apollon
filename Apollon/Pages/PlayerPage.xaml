@@ -1,0 +1,58 @@
+﻿<Page x:Class="Apollon.Pages.PlayerPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="using:Apollon.Pages"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid Padding="{x:Bind Frame.Padding, Mode=OneWay}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.ColumnSpan="2"
+                       DataContext="{x:Bind Frame}"
+                       Style="{StaticResource TitleTextBlockStyle}"
+                       Text="Player"
+                       Visibility="{Binding PageTitleVisibility}" />
+            <GridView Name="SongGrid"
+                      Grid.Row="1"
+                      Grid.Column="0"
+                      ItemsSource="{Binding Songs}"
+                      SelectedItem="{Binding PlayingSong,
+                                             Mode=TwoWay,
+                                             Source={StaticResource musicPlayer}}">
+                <GridView.ItemTemplate>
+                    <DataTemplate>
+                        <Border Background="BlueViolet">
+
+                            <TextBlock Text="{Binding Name}" TextWrapping="WrapWholeWords" />
+                        </Border>
+                    </DataTemplate>
+                </GridView.ItemTemplate>
+            </GridView>
+
+            <GridView Grid.Row="1"
+                      Grid.Column="1"
+                      DataContext="{Binding ElementName=SongGrid,
+                                            Path=SelectedItem}"
+                      ItemsSource="{Binding Jumps}"
+                      SelectedItem="{Binding NextJump,
+                                             Source={StaticResource musicPlayer},
+                                             Mode=TwoWay}">
+                <GridView.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}" />
+                    </DataTemplate>
+                </GridView.ItemTemplate>
+            </GridView>
+
+        </Grid>
+    </Grid>
+</Page>

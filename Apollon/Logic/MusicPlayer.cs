@@ -24,7 +24,14 @@ namespace Apollon.Logic
 
         public TimeSpan? Position { get; private set; }
 
-        public SongViewModel PlayingSong => mainSong;
+        public SongViewModel PlayingSong
+        {
+            get { return mainSong; }
+            set
+            {
+                Play(value);
+            }
+        }
 
         public TimeSpan? Duration => PlayingSong?.Song.Duration;
 
@@ -59,47 +66,47 @@ namespace Apollon.Logic
             {
                 this.Position = mainInputNode.Position;
 
-                if (NextJump != null && NextJump.Song == mainSong)
+                if (NextJump != null )
                 {
 
                     if (NextJump != null
                         && Position >= NextJump.Origin - NextJump.CrossFade
                         && Position <= NextJump.Origin
-                        && !IsFading)
+                        && !IsFading
+                        && NextJump.Song == mainSong)
                     {
                         IsFading = true;
-                        subSong = NextJump.TargetSong ?? NextJump.Song;
-                        subInputNode = await subSong.Song.CreateNode(graph);
-                        subInputNode.AddOutgoingConnection(outputNode);
+                        subInputNode = mainInputNode;
+                        subSong = mainSong;
 
-                        subInputNode.StartTime = NextJump.TargetTime - (NextJump.Origin - mainInputNode.Position);
-                        subInputNode.OutgoingGain = 0;
-                        subInputNode.Start();
+                        mainSong = NextJump.TargetSong ?? NextJump.Song;
+                        mainInputNode = await mainSong.Song.CreateNode(graph);
+                        mainInputNode.AddOutgoingConnection(outputNode);
+                        mainInputNode.StartTime = NextJump.TargetTime - (NextJump.Origin - subInputNode.Position);
+                        mainInputNode.OutgoingGain = 0;
+                        mainInputNode.Start();
                     }
                     if (IsFading && subInputNode != null)
                     {
-                        var fadePosition = (NextJump.Origin - mainInputNode.Position);
+                        var fadePosition = (NextJump.Origin - subInputNode.Position);
                         var fadeTime = NextJump.CrossFade;
 
                         var percentage = Math.Min(1.0, Math.Max(0.0, fadePosition.TotalSeconds / fadeTime.TotalSeconds));
 
-                        subInputNode.OutgoingGain = 1.0 - percentage;
-                        mainInputNode.OutgoingGain = percentage;
+                        subInputNode.OutgoingGain = percentage;
+                        mainInputNode.OutgoingGain = 1.0 - percentage;
 
                     }
                     if (Position > NextJump.Origin
                         && IsFading && subInputNode != null)
                     {
-                        subInputNode.OutgoingGain = 1.0;
-                        mainInputNode.Stop();
-                        mainInputNode.RemoveOutgoingConnection(outputNode);
-                        var tempNode = mainInputNode;
-                        mainInputNode = subInputNode;
-                        tempNode.Dispose();
+                        mainInputNode.OutgoingGain = 1.0;
+                        subInputNode.Stop();
+                        subInputNode.RemoveOutgoingConnection(outputNode);
+                        subInputNode.Dispose();
                         subInputNode = null;
-                        mainSong = subSong;
                         subSong = null;
-                        NextJump = NextJump.NextDefaultJump ?? mainSong.Jumps.FirstOrDefault(x => mainInputNode.Position < x.Origin);
+                        NextJump = NextJump.NextDefaultJump;
                         IsFading = false;
                     }
 
