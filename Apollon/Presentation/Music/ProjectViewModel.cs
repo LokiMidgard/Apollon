@@ -30,6 +30,11 @@ namespace Apollon.Presentation.Music
         [DataMember]
         public Guid Id { get; private set; } = Guid.NewGuid();
         public ICommand ImportSongCommand { get; private set; }
+        public ICommand RemoveSongCommand { get; private set; }
+
+        public int SelectedSongIndex { get; set; } = -1;
+
+
         private static DataContractSerializer Serelizer => new DataContractSerializer(typeof(ProjectViewModel), new DataContractSerializerSettings()
         {
             SerializeReadOnlyTypes = true,
@@ -46,9 +51,19 @@ namespace Apollon.Presentation.Music
         [OnDeserialized]
         void OnDeserialized(StreamingContext c)
         {
-            this.ImportSongCommand = new RelayCommand(() => ImportSong());
+            this.ImportSongCommand = new RelayCommand(ImportSong);
+            this.RemoveSongCommand = new RelayCommand(RemoveSong, CanRemoveSong);
             this.PropertyChanged += (sender, e) => PrepareForWrite();
             this.Songs.CollectionChanged += (sender, e) => PrepareForWrite();
+            this.SelectedSongIndex = -1;
+        }
+
+        private bool CanRemoveSong() => SelectedSongIndex >= 0 && SelectedSongIndex < Songs.Count;
+
+        private void RemoveSong()
+        {
+            Songs.RemoveAt(SelectedSongIndex);
+            SelectedSongIndex = -1;
         }
 
         private async void ImportSong()
@@ -75,6 +90,14 @@ namespace Apollon.Presentation.Music
             }
         }
 
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            if (propertyName == nameof(SelectedSongIndex))
+                (RemoveSongCommand as RelayCommand).OnCanExecuteChanged();
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+
         private Task prepareForWriteWaiter;
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -85,6 +108,7 @@ namespace Apollon.Presentation.Music
             {
                 var localTask = Task.Delay(WRITE_DELAY);
                 prepareForWriteWaiter = localTask;
+                await localTask;
                 if (Object.ReferenceEquals(prepareForWriteWaiter, localTask))
                 {
                     await Save();

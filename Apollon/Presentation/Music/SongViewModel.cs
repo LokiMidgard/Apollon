@@ -19,17 +19,22 @@ namespace Apollon.Presentation.Music
     class SongViewModel : INotifyPropertyChanged
     {
 
-        public SongViewModel(Song song, ProjectViewModel project) 
+        public SongViewModel(Song song, ProjectViewModel project)
         {
             this.Song = song;
             this.Project = project;
+            OnDeserialized(default(StreamingContext));
+        }
+
+        [OnDeserialized]
+        void OnDeserialized(StreamingContext c)
+        {
             AddJumpCommand = new RelayCommand(AddJump);
             RemoveJumpCommand = new RelayCommand(RemoveJump, CanRemoveJump);
 
             this.PropertyChanged += (sender, e) => Project.PrepareForWrite();
             this.Jumps.CollectionChanged += (sender, e) => Project.PrepareForWrite();
         }
-
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -57,9 +62,10 @@ namespace Apollon.Presentation.Music
 
 
         [DataMember]
-        public ObservableCollection<JumpViewModel> Jumps { get; } = new ObservableCollection<JumpViewModel>();
-        public ICommand AddJumpCommand { get; }
-        public ICommand RemoveJumpCommand { get; }
+        public ObservableCollection<JumpViewModel> Jumps => jumps ?? (jumps = new ObservableCollection<JumpViewModel>());
+        private ObservableCollection<JumpViewModel> jumps;
+        public ICommand AddJumpCommand { get; private set; }
+        public ICommand RemoveJumpCommand { get; private set; }
 
         public int SelectedJump { get; set; } = -1;
 

@@ -9,23 +9,47 @@
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <ScrollViewer Padding="{x:Bind Frame.Padding, Mode=OneWay}">
             <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
-                <TextBlock DataContext="{x:Bind Frame}"
+                <TextBlock Grid.ColumnSpan="2"
+                           DataContext="{x:Bind Frame}"
                            Style="{StaticResource TitleTextBlockStyle}"
                            Text="Page 1"
                            Visibility="{Binding PageTitleVisibility}" />
                 <TextBox Grid.Row="1"
+                         Grid.ColumnSpan="2"
                          PlaceholderText="[Projektname]"
-                         Text="{Binding Name,Mode=TwoWay}" />
+                         Text="{Binding Name,
+                                        Mode=TwoWay}" />
                 <Button Grid.Row="2"
                         Command="{Binding ImportSongCommand}"
                         Content="+" />
-                <ListView Grid.Row="3" ItemsSource="{Binding Songs}" />
+                <Button Grid.Row="2"
+                        Grid.Column="1"
+                        Command="{Binding RemoveSongCommand}"
+                        Content="-" />
+                <ListView Grid.Row="3"
+                          Grid.ColumnSpan="2"
+                          ItemsSource="{Binding Songs}"
+                          SelectedIndex="{Binding SelectedSongIndex, Mode=TwoWay}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock>
+                                <Run Text="{Binding Song.Album}" />
+                                <Run Text=" - " />
+                                <Run Text="{Binding Song.Title}" />
+                            </TextBlock>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
 
             </Grid>
         </ScrollViewer>

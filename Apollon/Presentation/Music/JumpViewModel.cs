@@ -15,12 +15,15 @@ namespace Apollon.Presentation.Music
     class JumpViewModel : INotifyPropertyChanged
     {
 
-        public JumpViewModel(SongViewModel song) : this()
+        public JumpViewModel(SongViewModel song)
         {
             Song = song;
+            OnDeserialized(default(StreamingContext));
         }
 
-        private JumpViewModel()
+
+        [OnDeserialized]
+        void OnDeserialized(StreamingContext c)
         {
             TestCommand = new RelayCommand(Test);
             this.PropertyChanged += (sender, e) => Song.Project.PrepareForWrite();
@@ -70,6 +73,6 @@ namespace Apollon.Presentation.Music
 
         [DataMember]
         public JumpViewModel NextDefaultJump { get; set; }
-        public ICommand TestCommand { get; }
+        public ICommand TestCommand { get; private set; }
     }
 }

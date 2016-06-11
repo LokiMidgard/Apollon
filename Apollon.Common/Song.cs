@@ -19,7 +19,7 @@ namespace Apollon.Common
 
         public Song(ISongData data)
         {
-            this.Data = data;
+            Update(data);
         }
 
         public ISongData Data { get; private set; }
