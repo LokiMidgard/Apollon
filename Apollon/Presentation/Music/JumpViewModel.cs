@@ -5,18 +5,28 @@ using System.Text;
 using System.Threading.Tasks;
 using Intense.Presentation;
 using System.Windows.Input;
+using System.Runtime.Serialization;
+using System.ComponentModel;
 
 namespace Apollon.Presentation.Music
 {
+    [DataContract(IsReference = true)]
     [PropertyChanged.ImplementPropertyChanged]
-    class JumpViewModel
+    class JumpViewModel : INotifyPropertyChanged
     {
 
-        public JumpViewModel(SongViewModel song)
+        public JumpViewModel(SongViewModel song) : this()
         {
             Song = song;
-            TestCommand = new RelayCommand(Test);
         }
+
+        private JumpViewModel()
+        {
+            TestCommand = new RelayCommand(Test);
+            this.PropertyChanged += (sender, e) => Song.Project.PrepareForWrite();
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         private async void Test()
         {
@@ -33,26 +43,32 @@ namespace Apollon.Presentation.Music
 
         public string Name { get; set; }
 
+        [DataMember]
         public SongViewModel Song { get; }
 
         /// <summary>
         /// The Position at when we initiate the jump
         /// </summary>
+        [DataMember]
         public TimeSpan Origin { get; set; }
 
         /// <summary>
         /// The Time to when we jump.
         /// </summary>
+        [DataMember]
         public TimeSpan TargetTime { get; set; }
         /// <summary>
         /// The Song to where we jump.
         /// </summary>
+        [DataMember]
         public SongViewModel TargetSong { get; set; }
         /// <summary>
         /// The Time before we hit origin where we start fading in the other Sound
         /// </summary>
+        [DataMember]
         public TimeSpan CrossFade { get; set; }
 
+        [DataMember]
         public JumpViewModel NextDefaultJump { get; set; }
         public ICommand TestCommand { get; }
     }

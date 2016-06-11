@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Runtime.Serialization;
 using System.Threading.Tasks;
 using Windows.Media.Audio;
 
-namespace Apollon.Model
+namespace Apollon.Common
 {
-    interface ISong
+    public interface ISongData
     {
         Task<AudioFileInputNode> CreateNode(AudioGraph graph);
 
@@ -13,6 +14,5 @@ namespace Apollon.Model
         TimeSpan Duration { get; }
         string Title { get; }
         uint TrackNumber { get; }
-
     }
 }

@@ -99,20 +99,19 @@
     <Compile Include="Common\TimeSpanToSecondsConverter.cs" />
     <Compile Include="Logic\MusicPlayer.cs" />
     <Compile Include="Model\FileSong.cs" />
-    <Compile Include="Model\ISong.cs" />
     <Compile Include="Pages\JumpEditor.xaml.cs">
       <DependentUpon>JumpEditor.xaml</DependentUpon>
     </Compile>
     <Compile Include="Presentation\AlbumViewModel.cs" />
     <Compile Include="Presentation\Music\JumpViewModel.cs" />
+    <Compile Include="Presentation\Music\ProjectViewModel.cs" />
     <Compile Include="Presentation\Music\SongViewModel.cs" />
-    <Compile Include="Presentation\SongLibraryViewmodel.cs" />
     <Compile Include="Shell.xaml.cs">
       <DependentUpon>Shell.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Pages\Page1.xaml.cs">
-      <DependentUpon>Page1.xaml</DependentUpon>
+    <Compile Include="Pages\PreojectPage.xaml.cs">
+      <DependentUpon>PreojectPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\SongEditor.xaml.cs">
       <DependentUpon>SongEditor.xaml</DependentUpon>
@@ -160,7 +159,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Pages\Page1.xaml">
+    <Page Include="Pages\PreojectPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -186,7 +185,12 @@
       <Name>Microsoft Mobile Extension SDK for Universal App Platform</Name>
     </SDKReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\Apollon.Common\Apollon.Common.csproj">
+      <Project>{a84b585e-ef82-47a7-b9c3-2db10d864068}</Project>
+      <Name>Apollon.Common</Name>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

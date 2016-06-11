@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Reflection;
+using System.Threading.Tasks;
+using Apollon.Presentation.Music;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation.Metadata;
@@ -14,6 +17,8 @@ namespace Apollon
     /// </summary>
     sealed partial class App : Application
     {
+        private const string SAVED_STATE = "SavedState";
+
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -27,6 +32,8 @@ namespace Apollon
         public static CoreDispatcher Dispatcher { get; private set; }
         internal static Logic.MusicPlayer MusicPlayer => App.Current.Resources["musicPlayer"] as Logic.MusicPlayer;
 
+        internal static Task<Presentation.Music.ProjectViewModel> CurrentProject { get; private set; }
+
         /// <summary>
         /// Invoked when the application is launched normally by the end user.  Other entry points
         /// will be used such as when the application is launched to open a specific file.
@@ -35,6 +42,9 @@ namespace Apollon
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
             MusicPlayer.Init();
+
+            Common.SongLookup.Configuration = new System.Composition.Hosting.ContainerConfiguration()
+         .WithAssembly(this.GetType().GetTypeInfo().Assembly);
 #if DEBUG
             if (System.Diagnostics.Debugger.IsAttached)
             {
@@ -58,8 +68,17 @@ namespace Apollon
 
                 if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
                 {
+
                     //TODO: Load state from previously suspended application
                 }
+
+                var guid = Windows.Storage.ApplicationData.Current.LocalSettings.Values[SAVED_STATE] as Guid?;
+
+                if (guid.HasValue)
+                {
+                    CurrentProject = Presentation.Music.ProjectViewModel.Load(guid.Value);
+                }
+
 
                 // set the Shell as content
                 Window.Current.Content = shell;
@@ -133,10 +152,16 @@ namespace Apollon
         /// </summary>
         /// <param name="sender">The source of the suspend request.</param>
         /// <param name="e">Details about the suspend request.</param>
-        private void OnSuspending(object sender, SuspendingEventArgs e)
+        private async void OnSuspending(object sender, SuspendingEventArgs e)
         {
             var deferral = e.SuspendingOperation.GetDeferral();
-            //TODO: Save application state and stop any background activity
+
+            if (CurrentProject != null)
+            {
+                var p = await CurrentProject;
+                await p?.Save();
+                Windows.Storage.ApplicationData.Current.LocalSettings.Values[SAVED_STATE] = p?.Id;
+            }
             deferral.Complete();
         }
 
@@ -151,6 +176,13 @@ namespace Apollon
             }
 
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = visibility;
+        }
+
+        internal static void SetProject(ProjectViewModel projectViewModel)
+        {
+            var t = new TaskCompletionSource<ProjectViewModel>();
+            t.SetResult(projectViewModel);
+            CurrentProject = t.Task;
         }
     }
 }
