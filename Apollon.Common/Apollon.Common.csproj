@@ -109,8 +109,11 @@
   <ItemGroup>
     <Compile Include="ISong.cs" />
     <Compile Include="ISongLookUp.cs" />
+    <Compile Include="SongAnalizer\IMusicAnalizer.cs" />
+    <Compile Include="SongAnalizer\Jump.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Song.cs" />
+    <Compile Include="SongAnalizer\MusicAnalizerConfiguration.cs" />
     <Compile Include="SongLookup.cs" />
     <Compile Include="SongMetadataEqualaty.cs" />
     <EmbeddedResource Include="Properties\Apollon.Common.rd.xml" />
