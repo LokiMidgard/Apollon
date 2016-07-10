@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package>
+  <metadata>
+    <id>Apollon.Common</id>
+    <version>0.0.0.2</version>
+    <title>Apollon.Common</title>
+    <authors>Patrick Kranz</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Helping Lib</description>
+    <releaseNotes>Initial.</releaseNotes>
+    <copyright>Copyright 2016</copyright>
+    <tags>Apollon</tags>
+    <dependencies>
+      <group targetFramework="uap10.0">
+        <dependency id="Microsoft.Composition" version="1.0.30" />
+        <dependency id="System.Collections" version="4.0.10" />
+        <dependency id="System.Diagnostics.Debug" version="4.0.10" />
+        <dependency id="System.Linq" version="4.0.0" />
+        <dependency id="System.Runtime" version="4.0.20" />
+        <dependency id="System.Runtime.Serialization.Primitives" version="4.0.10" />
+        <dependency id="System.Threading.Tasks" version="4.0.10" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="bin\ARM\Release\Apollon.Common.pri" target="runtimes\win10-arm\lib\uap10.0" />
+    <file src="bin\ARM\Release\Apollon.Common.dll" target="runtimes\win10-arm\lib\uap10.0" />
+    <file src="bin\ARM\Release\Apollon.Common.pdb" target="runtimes\win10-arm\lib\uap10.0" />
+    <file src="bin\x64\Release\Apollon.Common.pri" target="runtimes\win10-x64\lib\uap10.0" />
+    <file src="bin\x64\Release\Apollon.Common.dll" target="runtimes\win10-x64\lib\uap10.0" />
+    <file src="bin\x64\Release\Apollon.Common.pdb" target="runtimes\win10-x64\lib\uap10.0" />
+    <file src="bin\x86\Release\Apollon.Common.pri" target="runtimes\win10-x86\lib\uap10.0" />
+    <file src="bin\x86\Release\Apollon.Common.dll" target="runtimes\win10-x86\lib\uap10.0" />
+    <file src="bin\x86\Release\Apollon.Common.pdb" target="runtimes\win10-x86\lib\uap10.0" />
+    <file src="bin\Reference\Release\Apollon.Common.dll" target="ref\uap10.0" />
+    <file src="bin\x86\Release\Apollon.Common.pdb" target="ref\uap10.0" />
+    <file src="bin\x86\Release\Apollon.Common.pri" target="ref\uap10.0" />
+  </files>
+</package>

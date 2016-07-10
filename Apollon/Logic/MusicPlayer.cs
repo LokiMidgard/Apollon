@@ -29,7 +29,10 @@ namespace Apollon.Logic
             get { return mainSong; }
             set
             {
-                Play(value);
+                if (value != null)
+                    Play(value);
+                else
+                    Pause();
             }
         }
 
@@ -66,7 +69,7 @@ namespace Apollon.Logic
             {
                 this.Position = mainInputNode.Position;
 
-                if (NextJump != null )
+                if (NextJump != null)
                 {
 
                     if (NextJump != null
