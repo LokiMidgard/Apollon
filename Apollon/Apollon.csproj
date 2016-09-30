@@ -97,9 +97,6 @@
     </Compile>
     <Compile Include="Common\TimeSpanToSecondsConverter.cs" />
     <Compile Include="Logic\MusicPlayer.cs" />
-    <Compile Include="MainPage.xaml.cs">
-      <DependentUpon>MainPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Model\FileSong.cs" />
     <Compile Include="Pages\JumpEditor.xaml.cs">
       <DependentUpon>JumpEditor.xaml</DependentUpon>
@@ -152,10 +149,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="MainPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Pages\JumpEditor.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
