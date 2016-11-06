@@ -26,7 +26,7 @@ namespace Apollon.Common
         /// The Song to where we jump.
         /// </summary>
         [DataMember]
-        public Song TargetSong { get; set; }
+        public Windows.Storage.StorageFile TargetSong { get; set; }
         /// <summary>
         /// The Time before we hit origin where we start fading in the other Sound
         /// </summary>

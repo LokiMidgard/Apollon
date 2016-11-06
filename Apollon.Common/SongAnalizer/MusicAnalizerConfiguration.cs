@@ -105,7 +105,7 @@ namespace Apollon.Common.SongAnalizer
             {
             }
 
-            public Song SelectedSong { get; set; }
+            public Windows.Storage.StorageFile SelectedSong { get; set; }
         }
 
         public sealed class TimeSpanConfiguration : MinMaxConfigurationElement<TimeSpan>
